@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Login - System_Auth</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+<body>
+    <main class="container">
+        <div class="login-box">
+
+            <h1>System_Auth</h1>
+            <p>Entre na sua conta</p>
+
+            <form id="loginForm">
+
+                <label for="email">E-mail</label>
+                <input 
+                    type="email"
+                    id = "email"
+                    placeholder="seu@email.com"
+                >
+
+                <label for="password">Senha</label>
+                <input 
+                    type="password"
+                    id = "password"
+                    placeholder="Sua senha"
+                >
+
+                <button type="submit">Entrar</button>
+
+                <p id="message"></p>
+
+            </form>
+        </div>
+    </main>
+
+    <script src="{{ url_for('static', filename='js/login.js') }}"></script>
+
+</body>
+</html>
