@@ -10,6 +10,36 @@ function showMessage(text, type) {
     message.className = type;
 }
 
+async function registerUser(name, email, password){
+
+    try {
+        const response = await fetch("/api/register", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                name: name,
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            showMessage(data.message, "error");
+            return;
+        }
+
+        showMessage(data.message, "success");
+    } catch (error) {
+
+        showMessage("Erro ao conectar com o servidor.", "error");
+        console.error(error);
+    }
+}
+
 registerForm.addEventListener("submit", function (event) {
 
     event.preventDefault();
@@ -42,5 +72,5 @@ registerForm.addEventListener("submit", function (event) {
         return;
     }
 
-    showMessage("Cadastro válido!", "success");
+    registerUser(name, email, password);
 });
