@@ -17,7 +17,7 @@ registerForm.addEventListener("submit", function (event) {
     const name = document.getElementById("name").value.trim();
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const confirm_password = document.getElementById("confirmpassword").value;
+    const confirm_password = document.getElementById("confirmPassword").value;
 
     message.textContent = "";
     message.className = "";
