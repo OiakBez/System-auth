@@ -1,4 +1,5 @@
 import sqlite3
+from werkzeug.security import generate_password_hash
 
 def get_db_connection():
     connection = sqlite3.connect("system_auth.db")
@@ -21,3 +22,25 @@ def init_db():
 
     conn.commit()
     conn.close()
+
+def add_user(name, email, password):
+
+    conn = get_db_connection()
+
+    password_hash = generate_password_hash(password)
+
+    cursor = conn.execute(
+        """
+        INSERT INTO users (name, email, password)
+        VALUES (?, ?, ?)
+        """,
+        (name, email, password_hash)
+    )
+
+    conn.commit()
+
+    user_id = cursor.lastrowid
+
+    conn.close()
+
+    return user_id

@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, jsonify
-from database import init_db
+from database import init_db, add_user
 
 app = Flask(__name__)
 
@@ -29,10 +29,23 @@ def register():
             "message": "Preencha todos os campos."
         }), 400
 
-    return jsonify({
-        "success": True,
-        "message": "Cadastro recebido pelo servidor!"
-    })
+    try:
+    
+        user_id = add_user(name, email, password)
+
+        return jsonify({
+            "success": True,
+            "message": "Usuário criado com sucesso.",
+            "user_id": user_id
+        }), 201
+
+    except Exception as error:
+        print(error)
+
+        return jsonify({
+            "success": False,
+            "message": "Não foi possível criar o usuário."
+        }), 500
 
 
 
