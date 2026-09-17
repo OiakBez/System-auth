@@ -76,3 +76,18 @@ def verify_user(user_id):
 
     conn.commit()
     conn.close()
+
+def get_user_by_email(email):
+    conn = get_db_connection()
+
+    user = conn.execute(
+        """
+        SELECT * FROM users
+        WHERE email = ?
+        """,
+        (email,)
+    ).fetchone()
+
+    conn.close()
+
+    return user
