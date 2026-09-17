@@ -10,7 +10,8 @@ from database import (
     init_db, 
     add_user, 
     get_user_by_verification_token, 
-    verify_user
+    verify_user,
+    get_user_by_email
     )
 
 app = Flask(__name__)
@@ -82,6 +83,14 @@ def register():
             "success": False,
             "message": "Preencha todos os campos."
         }), 400
+
+    existing_user = get_user_by_email(email)
+
+    if existing_user is not None:
+        return jsonify({
+            "success": False,
+            "message": "Este e-mail já está cadastrado."
+        }), 409
 
     try:
     
