@@ -1,4 +1,11 @@
-from flask import Flask, render_template, request, jsonify
+import smtplib
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
+from email.message import EmailMessage
+from flask import Flask, render_template, request, jsonify, url_for
 from database import (
     init_db, 
     add_user, 
@@ -9,6 +16,48 @@ from database import (
 app = Flask(__name__)
 
 init_db()
+
+def send_verification_email(email, name, token):
+
+    verification_link = url_for(
+        "verify_email",
+        token = token,
+        _external=True
+    )
+
+    message = EmailMessage()
+
+    message["Subject"] = "Confirme seu email - System Auth"
+    message["From"] = os.getenv("MAIL_USERNAME")
+    message["To"] = email
+
+    message.set_content(
+        f"""
+Olá, {name}!
+
+Obrigado por criar sua conta no System Auth.
+
+Para confirmar seu e-mail, acesse:
+
+{verification_link}
+
+Se você não criou esta conta, ignore a mensagem.
+"""
+    )
+
+    with smtplib.SMTP(
+        os.getenv("MAIL_SERVER"),
+        int(os.getenv("MAIL_PORT"))
+    ) as server:
+
+        server.starttls()
+
+        server.login(
+            os.getenv("MAIL_USERNAME"),
+            os.getenv("MAIL_PASSWORD")
+        )
+
+        server.send_message(message)
 
 @app.route("/")
 def home():
@@ -38,7 +87,7 @@ def register():
     
         user_id, verification_token = add_user(name, email, password)
 
-        print("TOKEN DE VERIFICAÇÃO:", verification_token)
+        send_verification_email(email, name, verification_token)
 
         return jsonify({
             "success": True,
