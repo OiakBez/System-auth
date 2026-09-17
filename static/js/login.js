@@ -1,7 +1,19 @@
 const loginForm = document.getElementById("loginForm");
 const message = document.getElementById("message");
 
-loginForm.addEventListener("submit", function (event){
+
+
+function isValidEmail(email) {
+    return email.includes("@") && email.includes(".");
+}
+
+function showMessage(text, type) {
+    message.textContent = text;
+    message.className = type;
+}
+
+
+loginForm.addEventListener("submit", async function (event){
 
     event.preventDefault();
 
@@ -26,14 +38,36 @@ loginForm.addEventListener("submit", function (event){
         return;
     }
 
-    showMessage("Dados válidos! Pronto para enviar.", "sucess");
+    try {
+
+        const response = await fetch("/api/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+                email: email,
+                password: password
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+
+            showMessage(data.message, "error");
+            return;
+        }
+
+        showMessage(data.message, "success");
+    }catch (error) {
+
+        showMessage(
+            "Erro ao conectar com o servidor.",
+            "error"
+        );
+
+        console.error(error);
+    }
 });
-
-function isValidEmail(email) {
-    return email.includes("@") && email.includes(".");
-}
-
-function showMessage(text, type) {
-    message.textContent = text;
-    message.className = type;
-}

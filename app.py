@@ -5,6 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from email.message import EmailMessage
+from werkzeug.security import check_password_hash
 from flask import Flask, render_template, request, jsonify, url_for
 from database import (
     init_db, 
@@ -124,6 +125,42 @@ def verify_email(token):
 
     return "E-mail verificado com sucesso!"
 
+
+@app.route("/api/login", methods=["POST"])
+def login():
+
+    data = request.get_json()
+
+    email = data.get("email", "").strip()
+    password = data.get("password", "")
+
+    if not email or not password:
+
+        return jsonify({
+            "success": False,
+            "message": "Preencha todos os campos."
+        }), 400
+
+    user = get_user_by_email(email)
+
+    if user is None:
+
+        return jsonify({
+            "success": False,
+            "message": "E-mail ou senha incorretos."
+        }), 401
+
+    if not check_password_hash(user["password"], password):
+
+        return jsonify({
+        "success": False,
+        "message": "E-mail ou senha incorretos."
+        }), 401
+
+    return jsonify({
+        "success": True,
+        "message": "Login, realizado com sucesso!"
+    }), 200
 
 if __name__ == "__main__":
     app.run(debug=False)
